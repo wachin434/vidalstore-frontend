@@ -1,0 +1,114 @@
+/* Paleta calcada de la tienda de Steam: azul-gris oscuro, acento celeste,
+   verde de precio/compra. No es un tema "oscuro genérico": son los mismos
+   tonos que Valve usa desde hace años, a propósito, porque el pedido fue
+   "que se vea como Steam". */
+:root {
+  --fondo-oscuro: #171a21;
+  --fondo-degrade-1: #1b2838;
+  --fondo-degrade-2: #2a475e;
+  --panel: #16202d;
+  --panel-claro: #1e2c3d;
+  --borde: #2a3f5a;
+  --texto: #c7d5e0;
+  --texto-apagado: #8f98a0;
+  --texto-fuerte: #ffffff;
+  --acento: #66c0f4;
+  --acento-hover: #a3d9ff;
+  --precio: #a4d007;
+  --comprar-1: #74b525;
+  --comprar-2: #588a1b;
+  --peligro: #e0473e;
+  --advertencia: #beee11;
+  --radio: 3px;
+  --fuente: 'Segoe UI', Arial, 'Motiva Sans', sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--fondo-oscuro);
+  color: var(--texto);
+  font-family: var(--fuente);
+  font-size: 15px;
+}
+
+a { color: var(--acento); text-decoration: none; }
+a:hover { color: var(--acento-hover); text-decoration: underline; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+.contenedor {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* ---- Botones ---- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: var(--radio);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--texto-fuerte);
+  background: var(--panel-claro);
+  border: 1px solid var(--borde);
+  transition: filter 0.15s ease;
+}
+.btn:hover { filter: brightness(1.2); text-decoration: none; }
+
+.btn-comprar {
+  background: linear-gradient(to right, var(--comprar-1), var(--comprar-2));
+  border: 1px solid #4c761f;
+  color: #d2edb3;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  font-weight: 700;
+}
+
+.btn-peligro {
+  background: var(--peligro);
+  color: #fff;
+}
+
+.btn-fantasma {
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--texto);
+}
+
+.cargando, .vacio {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--texto-apagado);
+}
+
+.error-caja {
+  background: #3a1f1f;
+  border: 1px solid var(--peligro);
+  color: #ffb3ae;
+  padding: 16px 20px;
+  border-radius: var(--radio);
+  margin: 20px 0;
+}
+
+.etiqueta-rol {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 2px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--acento);
+  color: #0a1520;
+  font-weight: 700;
+}
