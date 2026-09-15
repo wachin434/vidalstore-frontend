@@ -1,0 +1,32 @@
+<div class="contenedor">
+  <h1>Mi biblioteca</h1>
+  <p class="subtitulo">Estos juegos salen del claim <code>sub</code> de tu token, no de un parámetro.</p>
+
+  @if (cargando()) {
+    <p class="cargando">Cargando tu biblioteca…</p>
+  } @else if (estado() === 200) {
+    @if (licencias().length === 0) {
+      <p class="vacio">Todavía no compras nada. Vuelve a la tienda.</p>
+    } @else {
+      <div class="grid-biblioteca">
+        @for (licencia of licencias(); track licencia.id) {
+          <article class="item">
+            <img [src]="licencia.juego?.portada" [alt]="licencia.juego?.titulo" />
+            <div>
+              <h3>{{ licencia.juego?.titulo }}</h3>
+              <p class="fecha">Comprado el {{ licencia.compradoEn | date: 'dd/MM/yyyy HH:mm' }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    }
+  } @else if (estado() === 401) {
+    <div class="error-caja"><strong>401 · No sé quién eres.</strong> Vuelve a entrar.</div>
+  } @else if (estado() === 403) {
+    <div class="error-caja">
+      <strong>403 ·</strong> te falta el scope <code>vidalstore/biblioteca.leer</code>.
+    </div>
+  } @else {
+    <div class="error-caja">El gateway respondió {{ estado() }}.</div>
+  }
+</div>
