@@ -1,0 +1,11 @@
+<div class="contenedor caja-callback">
+  @if (conCodigo()) {
+    <p>Confirmando tu sesión con Cognito…</p>
+  } @else {
+    <div class="error-caja">
+      <p><strong>Volviste sin código.</strong> Probablemente falta
+        <code>import 'aws-amplify/auth/enable-oauth-listener'</code> en main.ts.</p>
+      <a routerLink="/catalogo" class="btn btn-fantasma">Volver a la tienda</a>
+    </div>
+  }
+</div>
