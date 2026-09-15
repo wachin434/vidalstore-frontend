@@ -1,0 +1,62 @@
+.hero {
+  padding: 48px 0 32px;
+  border-bottom: 1px solid var(--borde);
+}
+.hero h1 {
+  color: var(--texto-fuerte);
+  font-size: 28px;
+  max-width: 640px;
+  margin: 0 0 8px;
+}
+.hero p { color: var(--texto-apagado); margin: 0; }
+
+.aviso {
+  margin-top: 20px;
+  background: #22331f;
+  border: 1px solid var(--comprar-1);
+  color: var(--advertencia);
+  padding: 12px 16px;
+  border-radius: var(--radio);
+}
+
+.grid-juegos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 18px;
+  padding: 32px 0 20px;
+}
+
+.tarjeta {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+.tarjeta:hover {
+  border-color: var(--acento);
+  transform: translateY(-2px);
+}
+
+.portada {
+  width: 100%;
+  aspect-ratio: 460 / 215;
+  object-fit: cover;
+  display: block;
+}
+
+.info { padding: 12px 14px 4px; flex: 1; }
+.info h3 { margin: 0 0 4px; font-size: 16px; color: var(--texto-fuerte); }
+.genero { margin: 0 0 8px; font-size: 12px; color: var(--acento); text-transform: uppercase; letter-spacing: 0.04em; }
+.descripcion { margin: 0; font-size: 13px; color: var(--texto-apagado); line-height: 1.4; }
+
+.compra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-top: 1px solid var(--borde);
+}
+.precio { color: var(--precio); font-weight: 700; font-size: 16px; }

@@ -1,0 +1,23 @@
+.contenedor { padding-top: 32px; }
+h1 { color: var(--texto-fuerte); margin-bottom: 4px; }
+.subtitulo { color: var(--texto-apagado); margin-top: 0; font-size: 13px; }
+code { background: var(--panel); padding: 1px 5px; border-radius: 2px; }
+
+.grid-biblioteca {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+  margin-top: 20px;
+}
+.item {
+  display: flex;
+  gap: 12px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 10px;
+  align-items: center;
+}
+.item img { width: 90px; aspect-ratio: 460/215; object-fit: cover; border-radius: 2px; }
+.item h3 { margin: 0 0 4px; font-size: 14px; color: var(--texto-fuerte); }
+.fecha { margin: 0; font-size: 12px; color: var(--texto-apagado); }

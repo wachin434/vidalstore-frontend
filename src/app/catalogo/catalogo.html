@@ -1,0 +1,52 @@
+<section class="hero">
+  <div class="contenedor">
+    <h1>Tu próximo juego favorito, con licencia revocable en cualquier momento</h1>
+    <p>Ofertas de temporada, novedades y clásicos. Compra segura con identidad real.</p>
+  </div>
+</section>
+
+<div class="contenedor">
+  @if (mensaje()) {
+    <div class="aviso">{{ mensaje() }}</div>
+  }
+
+  @if (cargando()) {
+    <p class="cargando">Cargando el catálogo…</p>
+  } @else if (estado() === 200) {
+    <div class="grid-juegos">
+      @for (juego of juegos(); track juego.id) {
+        <article class="tarjeta">
+          <img [src]="juego.portada" [alt]="juego.titulo" class="portada" />
+          <div class="info">
+            <h3>{{ juego.titulo }}</h3>
+            <p class="genero">{{ juego.genero }}</p>
+            <p class="descripcion">{{ juego.descripcion }}</p>
+          </div>
+          <div class="compra">
+            <span class="precio">{{ juego.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
+            <button
+              class="btn btn-comprar"
+              [disabled]="comprando() === juego.id"
+              (click)="comprar(juego)"
+            >
+              {{ comprando() === juego.id ? 'Comprando…' : 'Comprar' }}
+            </button>
+          </div>
+        </article>
+      }
+    </div>
+  } @else if (estado() === 401) {
+    <div class="error-caja">
+      <strong>401 · No sé quién eres.</strong> Tu sesión no es válida o expiró. Vuelve a entrar.
+    </div>
+  } @else if (estado() === 403) {
+    <div class="error-caja">
+      <strong>403 · Sé quién eres, y no te alcanza.</strong> A tu token le falta el scope
+      <code>vidalstore/catalogo.leer</code>.
+    </div>
+  } @else {
+    <div class="error-caja">
+      <strong>El gateway respondió {{ estado() }}.</strong> ¿Está corriendo en localhost:8080?
+    </div>
+  }
+</div>
