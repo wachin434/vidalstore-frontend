@@ -108,10 +108,14 @@
               <span class="precio">{{ juego.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
               <button
                 class="btn btn-comprar"
-                [disabled]="comprando() === juego.id"
+                [disabled]="comprando() === juego.id || yaComprados().has(juego.id)"
                 (click)="comprar(juego)"
               >
-                {{ comprando() === juego.id ? 'Comprando…' : (comprado() === juego.id ? '✓ Comprado' : 'Comprar') }}
+                {{
+                  comprando() === juego.id
+                    ? 'Comprando…'
+                    : (yaComprados().has(juego.id) ? '✓ En tu biblioteca' : 'Comprar')
+                }}
               </button>
             </div>
           </article>
