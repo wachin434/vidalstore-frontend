@@ -3,17 +3,17 @@
    tonos que Valve usa desde hace años, a propósito, porque el pedido fue
    "que se vea como Steam". */
 :root {
-  --fondo-oscuro: #171a21;
-  --fondo-degrade-1: #1b2838;
-  --fondo-degrade-2: #2a475e;
-  --panel: #16202d;
-  --panel-claro: #1e2c3d;
-  --borde: #2a3f5a;
-  --texto: #c7d5e0;
-  --texto-apagado: #8f98a0;
+  --fondo-oscuro: #120a1f;
+  --fondo-degrade-1: #1a0f2e;
+  --fondo-degrade-2: #2d1b4e;
+  --panel: #1c1030;
+  --panel-claro: #251a3d;
+  --borde: #3d2a5c;
+  --texto: #d9d0e8;
+  --texto-apagado: #9b8bb4;
   --texto-fuerte: #ffffff;
-  --acento: #66c0f4;
-  --acento-hover: #a3d9ff;
+  --acento: #a855f7;
+  --acento-hover: #c084fc;
   --precio: #a4d007;
   --comprar-1: #74b525;
   --comprar-2: #588a1b;
