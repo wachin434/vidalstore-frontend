@@ -4,6 +4,7 @@ import { Biblioteca } from './biblioteca/biblioteca';
 import { Publicar } from './publicar/publicar';
 import { Licencias } from './admin/licencias';
 import { Callback } from './callback/callback';
+import { NoEncontrado } from './no-encontrado/no-encontrado';
 import { sesionGuard } from './auth/sesion.guard';
 
 export const routes: Routes = [
@@ -13,4 +14,5 @@ export const routes: Routes = [
   { path: 'publicar', component: Publicar, canActivate: [sesionGuard] },
   { path: 'admin', component: Licencias, canActivate: [sesionGuard] },
   { path: 'callback', component: Callback },
+  { path: '**', component: NoEncontrado },
 ];
