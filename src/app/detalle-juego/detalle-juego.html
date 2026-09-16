@@ -61,8 +61,12 @@
 
         <div class="precio-caja">
           <span class="precio">{{ juego()!.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
-          <button class="btn btn-comprar btn-grande" [disabled]="comprando()" (click)="comprar()">
-            {{ comprando() ? 'Comprando…' : 'Comprar' }}
+          <button
+            class="btn btn-comprar btn-grande"
+            [disabled]="comprando() || yaLoTiene()"
+            (click)="comprar()"
+          >
+            {{ comprando() ? 'Comprando…' : (yaLoTiene() ? '✓ En tu biblioteca' : 'Comprar') }}
           </button>
         </div>
 
