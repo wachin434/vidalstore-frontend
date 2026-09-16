@@ -2,6 +2,7 @@ import { Component, inject, signal, computed, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { Vidalstore, Juego } from '../vidalstore/vidalstore';
 import { Sesion } from '../auth/sesion';
 
@@ -22,7 +23,7 @@ const MENSAJES_HERO = [
 
 @Component({
   selector: 'app-catalogo',
-  imports: [CurrencyPipe, FormsModule],
+  imports: [CurrencyPipe, FormsModule, RouterLink],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
@@ -44,7 +45,6 @@ export class Catalogo implements OnDestroy {
   protected readonly heroIndex = signal(0);
   private heroTimer?: ReturnType<typeof setInterval>;
 
-  // Edición inline de portada: qué juego se está editando ahora mismo, y el valor del input.
   protected readonly editandoPortada = signal<string | null>(null);
   protected readonly urlNueva = signal('');
   protected readonly guardandoPortada = signal(false);

@@ -58,7 +58,7 @@
       <div [class]="vistaLista() ? 'lista-juegos' : 'grid-juegos'">
         @for (juego of juegosFiltrados(); track juego.id) {
           <article class="tarjeta" [class.recien-comprado]="comprado() === juego.id">
-            <div class="portada-contenedor">
+            <a [routerLink]="['/catalogo', juego.id]" class="portada-contenedor">
               <img [src]="juego.portada" [alt]="juego.titulo" class="portada" />
               @if (juego.id === idOferta()) {
                 <span class="badge badge-oferta">OFERTA</span>
@@ -66,11 +66,15 @@
                 <span class="badge badge-nuevo">NUEVO</span>
               }
               @if (sesion.esEditor()) {
-                <button class="btn-editar-portada" (click)="empezarEdicionPortada(juego)" title="Cambiar imagen">
+                <button
+                  class="btn-editar-portada"
+                  (click)="$event.preventDefault(); $event.stopPropagation(); empezarEdicionPortada(juego)"
+                  title="Cambiar imagen"
+                >
                   ✎
                 </button>
               }
-            </div>
+            </a>
 
             @if (editandoPortada() === juego.id) {
               <div class="editor-portada">
@@ -96,7 +100,7 @@
             }
 
             <div class="info">
-              <h3>{{ juego.titulo }}</h3>
+              <h3><a [routerLink]="['/catalogo', juego.id]" class="titulo-link">{{ juego.titulo }}</a></h3>
               <p class="genero">{{ juego.genero }}</p>
               <p class="descripcion">{{ juego.descripcion }}</p>
             </div>

@@ -206,3 +206,5 @@
 }
 .editor-portada-botones { display: flex; gap: 8px; }
 .btn-chico { padding: 6px 12px; font-size: 12px; }
+.titulo-link { color: inherit; }
+.titulo-link:hover { color: var(--acento); text-decoration: none; }
