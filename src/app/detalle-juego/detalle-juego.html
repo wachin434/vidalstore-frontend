@@ -1,0 +1,93 @@
+<div class="contenedor">
+  @if (cargando()) {
+    <p class="cargando">Cargando…</p>
+  } @else if (estado() !== 200) {
+    <div class="error-caja">El gateway respondió {{ estado() }}.</div>
+  } @else if (!juego()) {
+    <div class="error-caja">
+      Este juego no existe. <a routerLink="/catalogo">Volver a la tienda</a>.
+    </div>
+  } @else {
+    <a routerLink="/catalogo" class="volver">← Volver a la tienda</a>
+
+    <div class="detalle">
+      <div class="galeria">
+        <img [src]="galeria()[imagenActiva()]" [alt]="juego()!.titulo" class="galeria-principal" />
+        <div class="galeria-miniaturas">
+          @for (img of galeria(); track $index) {
+            <img
+              [src]="img"
+              [class.activa]="$index === imagenActiva()"
+              (click)="imagenActiva.set($index)"
+              class="miniatura"
+            />
+          }
+        </div>
+
+        <div class="descripcion-larga">
+          <h2>Acerca de este juego</h2>
+          <p>{{ juego()!.descripcion }}</p>
+          <p class="genero-tag">{{ juego()!.genero }}</p>
+        </div>
+
+        <div class="resenas">
+          <h2>
+            Reseñas de la comunidad
+            <span class="promedio">{{ promedioEstrellas() }} ★</span>
+          </h2>
+          @for (r of resenas; track r.usuario) {
+            <article class="resena">
+              <div class="resena-cabecera">
+                <strong>{{ r.usuario }}</strong>
+                <span class="resena-fecha">{{ r.fecha }}</span>
+              </div>
+              <div class="estrellas">
+                @for (i of rango5; track i) {
+                  <span [class.llena]="i <= r.estrellas">★</span>
+                }
+              </div>
+              <p>{{ r.comentario }}</p>
+            </article>
+          }
+        </div>
+      </div>
+
+      <aside class="barra-compra">
+        <h1>{{ juego()!.titulo }}</h1>
+
+        @if (mensaje()) {
+          <div class="aviso">{{ mensaje() }}</div>
+        }
+
+        <div class="precio-caja">
+          <span class="precio">{{ juego()!.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
+          <button class="btn btn-comprar btn-grande" [disabled]="comprando()" (click)="comprar()">
+            {{ comprando() ? 'Comprando…' : 'Comprar' }}
+          </button>
+        </div>
+
+        <dl class="ficha-tecnica">
+          <dt>Género</dt>
+          <dd>{{ juego()!.genero }}</dd>
+        </dl>
+      </aside>
+    </div>
+
+    @if (relacionados().length > 0) {
+      <section class="relacionados">
+        <h2>También te puede interesar</h2>
+        <div class="relacionados-grid">
+          @for (r of relacionados(); track r.id) {
+            <a [routerLink]="['/catalogo', r.id]" class="tarjeta-relacionada">
+              <img [src]="r.portada" [alt]="r.titulo" />
+              <div>
+                <h4>{{ r.titulo }}</h4>
+                <span class="precio-chico">{{ r.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>
