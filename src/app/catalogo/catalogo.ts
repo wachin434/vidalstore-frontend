@@ -1,7 +1,9 @@
 import { Component, inject, signal, computed, OnDestroy } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Vidalstore, Juego } from '../vidalstore/vidalstore';
+import { Sesion } from '../auth/sesion';
 
 const MENSAJES_HERO = [
   {
@@ -20,12 +22,13 @@ const MENSAJES_HERO = [
 
 @Component({
   selector: 'app-catalogo',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, FormsModule],
   templateUrl: './catalogo.html',
   styleUrl: './catalogo.css',
 })
 export class Catalogo implements OnDestroy {
   private readonly vidalstore = inject(Vidalstore);
+  protected readonly sesion = inject(Sesion);
 
   protected readonly juegos = signal<Juego[]>([]);
   protected readonly estado = signal<number | null>(null);
@@ -40,6 +43,11 @@ export class Catalogo implements OnDestroy {
   protected readonly mensajesHero = MENSAJES_HERO;
   protected readonly heroIndex = signal(0);
   private heroTimer?: ReturnType<typeof setInterval>;
+
+  // Edición inline de portada: qué juego se está editando ahora mismo, y el valor del input.
+  protected readonly editandoPortada = signal<string | null>(null);
+  protected readonly urlNueva = signal('');
+  protected readonly guardandoPortada = signal(false);
 
   protected readonly juegosFiltrados = computed(() => {
     const texto = this.busqueda().trim().toLowerCase();
@@ -102,6 +110,37 @@ export class Catalogo implements OnDestroy {
       error: (e: HttpErrorResponse) => {
         this.comprando.set(null);
         this.mensaje.set(`No se pudo comprar (HTTP ${e.status}).`);
+      },
+    });
+  }
+
+  protected empezarEdicionPortada(juego: Juego) {
+    this.editandoPortada.set(juego.id);
+    this.urlNueva.set(juego.portada);
+  }
+
+  protected cancelarEdicionPortada() {
+    this.editandoPortada.set(null);
+    this.urlNueva.set('');
+  }
+
+  protected guardarPortada(juego: Juego) {
+    const url = this.urlNueva().trim();
+    if (!url) return;
+
+    this.guardandoPortada.set(true);
+    this.vidalstore.editarJuego(juego.id, { portada: url }).subscribe({
+      next: (actualizado) => {
+        this.juegos.update((lista) =>
+          lista.map((j) => (j.id === juego.id ? { ...j, portada: actualizado.portada } : j)),
+        );
+        this.guardandoPortada.set(false);
+        this.editandoPortada.set(null);
+        this.mensaje.set(`Imagen de "${juego.titulo}" actualizada.`);
+      },
+      error: (e: HttpErrorResponse) => {
+        this.guardandoPortada.set(false);
+        this.mensaje.set(`No se pudo cambiar la imagen (HTTP ${e.status}).`);
       },
     });
   }
