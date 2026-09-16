@@ -1,7 +1,12 @@
 <section class="hero">
   <div class="contenedor">
-    <h1>Tu próximo juego favorito, con licencia revocable en cualquier momento</h1>
-    <p>Ofertas de temporada, novedades y clásicos. Compra segura con identidad real.</p>
+    <h1>{{ mensajesHero[heroIndex()].titulo }}</h1>
+    <p>{{ mensajesHero[heroIndex()].subtitulo }}</p>
+    <div class="hero-puntos">
+      @for (m of mensajesHero; track $index) {
+        <span class="punto" [class.activo]="$index === heroIndex()"></span>
+      }
+    </div>
   </div>
 </section>
 
@@ -10,31 +15,76 @@
     <div class="aviso">{{ mensaje() }}</div>
   }
 
+  @if (estado() === 200) {
+    <div class="barra-herramientas">
+      <input
+        class="buscador"
+        type="text"
+        placeholder="Buscar por título o género…"
+        [value]="busqueda()"
+        (input)="busqueda.set($any($event.target).value)"
+      />
+      <div class="selector-vista">
+        <button
+          class="btn-vista"
+          [class.activo]="!vistaLista()"
+          (click)="vistaLista.set(false)"
+          title="Vista en grilla"
+        >▦</button>
+        <button
+          class="btn-vista"
+          [class.activo]="vistaLista()"
+          (click)="vistaLista.set(true)"
+          title="Vista en lista"
+        >☰</button>
+      </div>
+    </div>
+  }
+
   @if (cargando()) {
-    <p class="cargando">Cargando el catálogo…</p>
-  } @else if (estado() === 200) {
     <div class="grid-juegos">
-      @for (juego of juegos(); track juego.id) {
-        <article class="tarjeta">
-          <img [src]="juego.portada" [alt]="juego.titulo" class="portada" />
-          <div class="info">
-            <h3>{{ juego.titulo }}</h3>
-            <p class="genero">{{ juego.genero }}</p>
-            <p class="descripcion">{{ juego.descripcion }}</p>
-          </div>
-          <div class="compra">
-            <span class="precio">{{ juego.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
-            <button
-              class="btn btn-comprar"
-              [disabled]="comprando() === juego.id"
-              (click)="comprar(juego)"
-            >
-              {{ comprando() === juego.id ? 'Comprando…' : 'Comprar' }}
-            </button>
-          </div>
-        </article>
+      @for (i of [1,2,3]; track i) {
+        <div class="tarjeta esqueleto">
+          <div class="esqueleto-img"></div>
+          <div class="esqueleto-linea ancho-70"></div>
+          <div class="esqueleto-linea ancho-40"></div>
+        </div>
       }
     </div>
+  } @else if (estado() === 200) {
+    @if (juegosFiltrados().length === 0) {
+      <p class="vacio">No hay juegos que coincidan con "{{ busqueda() }}".</p>
+    } @else {
+      <div [class]="vistaLista() ? 'lista-juegos' : 'grid-juegos'">
+        @for (juego of juegosFiltrados(); track juego.id) {
+          <article class="tarjeta" [class.recien-comprado]="comprado() === juego.id">
+            <div class="portada-contenedor">
+              <img [src]="juego.portada" [alt]="juego.titulo" class="portada" />
+              @if (juego.id === idOferta()) {
+                <span class="badge badge-oferta">OFERTA</span>
+              } @else if (juego.id === idNuevo()) {
+                <span class="badge badge-nuevo">NUEVO</span>
+              }
+            </div>
+            <div class="info">
+              <h3>{{ juego.titulo }}</h3>
+              <p class="genero">{{ juego.genero }}</p>
+              <p class="descripcion">{{ juego.descripcion }}</p>
+            </div>
+            <div class="compra">
+              <span class="precio">{{ juego.precio | currency: 'CLP' : 'symbol-narrow' : '1.0-0' }}</span>
+              <button
+                class="btn btn-comprar"
+                [disabled]="comprando() === juego.id"
+                (click)="comprar(juego)"
+              >
+                {{ comprando() === juego.id ? 'Comprando…' : (comprado() === juego.id ? '✓ Comprado' : 'Comprar') }}
+              </button>
+            </div>
+          </article>
+        }
+      </div>
+    }
   } @else if (estado() === 401) {
     <div class="error-caja">
       <strong>401 · No sé quién eres.</strong> Tu sesión no es válida o expiró. Vuelve a entrar.

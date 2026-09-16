@@ -1,6 +1,7 @@
 .hero {
   padding: 48px 0 32px;
   border-bottom: 1px solid var(--borde);
+  min-height: 140px;
 }
 .hero h1 {
   color: var(--texto-fuerte);
@@ -9,6 +10,20 @@
   margin: 0 0 8px;
 }
 .hero p { color: var(--texto-apagado); margin: 0; }
+
+.hero-puntos {
+  display: flex;
+  gap: 6px;
+  margin-top: 16px;
+}
+.punto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--borde);
+  transition: background 0.2s ease;
+}
+.punto.activo { background: var(--acento); }
 
 .aviso {
   margin-top: 20px;
@@ -19,11 +34,62 @@
   border-radius: var(--radio);
 }
 
+.barra-herramientas {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 24px;
+}
+.buscador {
+  flex: 1;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 8px 12px;
+  color: var(--texto-fuerte);
+  font-size: 14px;
+}
+.buscador:focus { outline: 1px solid var(--acento); }
+.buscador::placeholder { color: var(--texto-apagado); }
+
+.selector-vista { display: flex; gap: 4px; }
+.btn-vista {
+  width: 36px;
+  height: 36px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  color: var(--texto-apagado);
+  font-size: 16px;
+  cursor: pointer;
+}
+.btn-vista.activo { color: var(--texto-fuerte); border-color: var(--acento); }
+
 .grid-juegos {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 18px;
-  padding: 32px 0 20px;
+  padding: 24px 0 20px;
+}
+
+.lista-juegos {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 0 20px;
+}
+.lista-juegos .tarjeta {
+  flex-direction: row;
+  align-items: center;
+}
+.lista-juegos .portada-contenedor { width: 160px; flex-shrink: 0; }
+.lista-juegos .info { flex: 1; padding: 0 16px; }
+.lista-juegos .compra {
+  border-top: none;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  padding-right: 16px;
 }
 
 .tarjeta {
@@ -33,19 +99,38 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: transform 0.15s ease, border-color 0.15s ease;
+  transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.3s ease;
 }
 .tarjeta:hover {
   border-color: var(--acento);
   transform: translateY(-2px);
 }
+.tarjeta.recien-comprado {
+  border-color: var(--comprar-1);
+  box-shadow: 0 0 0 2px var(--comprar-1);
+}
 
+.portada-contenedor { position: relative; }
 .portada {
   width: 100%;
   aspect-ratio: 460 / 215;
   object-fit: cover;
   display: block;
 }
+
+.badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  padding: 3px 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-radius: 2px;
+}
+.badge-oferta { background: var(--peligro); color: #fff; }
+.badge-nuevo { background: var(--acento); color: #fff; }
 
 .info { padding: 12px 14px 4px; flex: 1; }
 .info h3 { margin: 0 0 4px; font-size: 16px; color: var(--texto-fuerte); }
@@ -59,4 +144,4 @@
   padding: 12px 14px;
   border-top: 1px solid var(--borde);
 }
-.precio { color: var(--precio); font-weight: 700; font-size: 16px; }
+.precio { color:
