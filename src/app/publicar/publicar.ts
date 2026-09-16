@@ -31,15 +31,15 @@ export class Publicar {
     this.vidalstore.publicarJuego(this.juego).subscribe({
       next: (creado) => {
         this.enviando.set(false);
-        this.resultado.set({ ok: true, mensaje: "${creado.titulo}" publicado. });
+        this.resultado.set({ ok: true, mensaje: `"${creado.titulo}" publicado.` });
       },
       error: (e: HttpErrorResponse) => {
         this.enviando.set(false);
         const razon =
           e.status === 403
             ? 'te falta el grupo editores/administradores'
-            : HTTP ${e.status};
-        this.resultado.set({ ok: false, mensaje: No se pudo publicar (${razon}). });
+            : `HTTP ${e.status}`;
+        this.resultado.set({ ok: false, mensaje: `No se pudo publicar (${razon}).` });
       },
     });
   }
