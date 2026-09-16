@@ -1,0 +1,58 @@
+<div class="contenedor">
+  <h1>Administración</h1>
+  <p class="subtitulo">Ver y revocar licencias es la operación más sensible del sistema.</p>
+
+  @if (cargando()) {
+    <p class="cargando">Cargando…</p>
+  } @else if (estado() === 200) {
+    <table class="tabla">
+      <thead>
+        <tr><th>Juego</th><th>Usuario (sub)</th><th>Comprado</th><th>Estado</th><th></th></tr>
+      </thead>
+      <tbody>
+        @for (l of licencias(); track l.id) {
+          <tr [class.revocada]="l.revocada">
+            <td>{{ l.juego?.titulo }}</td>
+            <td class="sub">{{ l.usuarioSub }}</td>
+            <td>{{ l.compradoEn | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ l.revocada ? 'Revocada' : 'Activa' }}</td>
+            <td>
+              @if (!l.revocada) {
+                <button
+                  class="btn btn-peligro"
+                  [disabled]="revocando() === l.id"
+                  (click)="revocar(l)"
+                >
+                  {{ revocando() === l.id ? 'Revocando…' : 'Revocar' }}
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <h2>Auditoría de revocaciones</h2>
+    @if (auditoria().length === 0) {
+      <p class="vacio">Todavía no hay revocaciones.</p>
+    } @else {
+      <table class="tabla">
+        <thead><tr><th>Fecha</th><th>Admin (sub)</th><th>Usuario (sub)</th><th>Juego</th></tr></thead>
+        <tbody>
+          @for (a of auditoria(); track a.id) {
+            <tr>
+              <td>{{ a.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td class="sub">{{ a.adminSub }}</td>
+              <td class="sub">{{ a.usuarioSub }}</td>
+              <td>{{ a.juegoId }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  } @else if (estado() === 403) {
+    <div class="error-caja">403 · solo el grupo <code>administradores</code> ve esta pantalla.</div>
+  } @else {
+    <div class="error-caja">El gateway respondió {{ estado() }}.</div>
+  }
+</div>

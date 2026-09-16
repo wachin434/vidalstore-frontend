@@ -1,0 +1,21 @@
+.contenedor { padding-top: 32px; }
+h1 { color: var(--texto-fuerte); margin-bottom: 4px; }
+h2 { color: var(--texto-fuerte); margin-top: 36px; font-size: 18px; }
+.subtitulo { color: var(--texto-apagado); margin-top: 0; font-size: 13px; }
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: var(--panel);
+  border: 1px solid var(--borde);
+}
+.tabla th, .tabla td {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--borde);
+  font-size: 13px;
+}
+.tabla th { color: var(--texto-apagado); text-transform: uppercase; font-size: 11px; letter-spacing: 0.04em; }
+.sub { font-family: monospace; color: var(--texto-apagado); font-size: 12px; }
+tr.revocada td { color: var(--texto-apagado); text-decoration: line-through; }

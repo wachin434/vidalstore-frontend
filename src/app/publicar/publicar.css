@@ -1,0 +1,29 @@
+.contenedor { padding-top: 32px; max-width: 520px; }
+h1 { color: var(--texto-fuerte); margin-bottom: 4px; }
+.subtitulo { color: var(--texto-apagado); margin-top: 0; font-size: 13px; }
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 24px 0;
+}
+label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--texto); }
+input, textarea {
+  background: var(--panel);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  padding: 8px 10px;
+  color: var(--texto-fuerte);
+  font-family: inherit;
+  font-size: 14px;
+}
+input:focus, textarea:focus { outline: 1px solid var(--acento); }
+
+.aviso {
+  background: #22331f;
+  border: 1px solid var(--comprar-1);
+  color: var(--advertencia);
+  padding: 12px 16px;
+  border-radius: var(--radio);
+}

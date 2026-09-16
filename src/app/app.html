@@ -1,0 +1,46 @@
+<header class="barra">
+  <div class="contenedor barra-interna">
+    <a routerLink="/catalogo" class="logo">Vidal<span>Store</span></a>
+
+    <nav class="nav-principal">
+      <a routerLink="/catalogo" routerLinkActive="activo">Tienda</a>
+      @if (sesion.haySesion()) {
+        <a routerLink="/biblioteca" routerLinkActive="activo">Mi biblioteca</a>
+      }
+      @if (sesion.esEditor()) {
+        <a routerLink="/publicar" routerLinkActive="activo">Publicar</a>
+      }
+      @if (sesion.esAdministrador()) {
+        <a routerLink="/admin" routerLinkActive="activo">Administración</a>
+      }
+    </nav>
+
+    <div class="sesion">
+      @if (sesion.haySesion()) {
+        @if (sesion.correo()) {
+          <span class="correo">{{ sesion.correo() }}</span>
+        }
+        @if (sesion.esAdministrador()) {
+          <span class="etiqueta-rol">admin</span>
+        } @else if (sesion.esEditor()) {
+          <span class="etiqueta-rol">editor</span>
+        } @else {
+          <span class="etiqueta-rol">jugador</span>
+        }
+        <button class="btn btn-fantasma" (click)="salir()">Salir</button>
+      } @else {
+        <button class="btn btn-comprar" (click)="entrar()">Entrar</button>
+      }
+    </div>
+  </div>
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer class="pie">
+  <div class="contenedor">
+    <p>VidalStore — no es Steam, se ve como Steam. Identidad real con AWS Cognito.</p>
+  </div>
+</footer>

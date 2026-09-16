@@ -1,0 +1,39 @@
+<div class="contenedor">
+  <h1>Publicar un juego</h1>
+  <p class="subtitulo">Solo editores y administradores llegan hasta acá — protegido por grupo, no por scope.</p>
+
+  @if (!sesion.esEditor()) {
+    <div class="error-caja">Tu cuenta no está en el grupo editores/administradores.</div>
+  }
+
+  <form (ngSubmit)="publicar()" class="formulario">
+    <label>
+      Título
+      <input name="titulo" [(ngModel)]="juego.titulo" required />
+    </label>
+    <label>
+      Precio (CLP)
+      <input name="precio" type="number" [(ngModel)]="juego.precio" required />
+    </label>
+    <label>
+      Género
+      <input name="genero" [(ngModel)]="juego.genero" />
+    </label>
+    <label>
+      URL de la portada
+      <input name="portada" [(ngModel)]="juego.portada" placeholder="https://…" />
+    </label>
+    <label>
+      Descripción
+      <textarea name="descripcion" [(ngModel)]="juego.descripcion" rows="3"></textarea>
+    </label>
+
+    <button class="btn btn-comprar" type="submit" [disabled]="enviando()">
+      {{ enviando() ? 'Publicando…' : 'Publicar juego' }}
+    </button>
+  </form>
+
+  @if (resultado()) {
+    <div [class]="resultado()!.ok ? 'aviso' : 'error-caja'">{{ resultado()!.mensaje }}</div>
+  }
+</div>
