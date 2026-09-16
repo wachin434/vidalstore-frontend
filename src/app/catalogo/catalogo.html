@@ -65,7 +65,36 @@
               } @else if (juego.id === idNuevo()) {
                 <span class="badge badge-nuevo">NUEVO</span>
               }
+              @if (sesion.esEditor()) {
+                <button class="btn-editar-portada" (click)="empezarEdicionPortada(juego)" title="Cambiar imagen">
+                  ✎
+                </button>
+              }
             </div>
+
+            @if (editandoPortada() === juego.id) {
+              <div class="editor-portada">
+                <input
+                  type="text"
+                  placeholder="https://…"
+                  [value]="urlNueva()"
+                  (input)="urlNueva.set($any($event.target).value)"
+                />
+                <div class="editor-portada-botones">
+                  <button
+                    class="btn btn-comprar btn-chico"
+                    [disabled]="guardandoPortada()"
+                    (click)="guardarPortada(juego)"
+                  >
+                    {{ guardandoPortada() ? 'Guardando…' : 'Guardar' }}
+                  </button>
+                  <button class="btn btn-fantasma btn-chico" (click)="cancelarEdicionPortada()">
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            }
+
             <div class="info">
               <h3>{{ juego.titulo }}</h3>
               <p class="genero">{{ juego.genero }}</p>
@@ -96,7 +125,4 @@
     </div>
   } @else {
     <div class="error-caja">
-      <strong>El gateway respondió {{ estado() }}.</strong> ¿Está corriendo en localhost:8080?
-    </div>
-  }
-</div>
+      <strong>El gateway respondió {{ estado() }}.</strong>
