@@ -37,6 +37,7 @@ export class Catalogo implements OnDestroy {
   protected readonly comprando = signal<string | null>(null);
   protected readonly comprado = signal<string | null>(null);
   protected readonly mensaje = signal<string | null>(null);
+  protected readonly yaComprados = signal<Set<string>>(new Set());
 
   protected readonly busqueda = signal('');
   protected readonly vistaLista = signal(false);
@@ -89,10 +90,23 @@ export class Catalogo implements OnDestroy {
         this.juegos.set(juegos);
         this.estado.set(200);
         this.cargando.set(false);
+        this.cargarBibliotecaPropia();
       },
       error: (e: HttpErrorResponse) => {
         this.estado.set(e.status);
         this.cargando.set(false);
+      },
+    });
+  }
+
+  private cargarBibliotecaPropia() {
+    this.vidalstore.miBiblioteca().subscribe({
+      next: (licencias) => {
+        const ids = new Set(licencias.map((l) => l.juegoId));
+        this.yaComprados.set(ids);
+      },
+      error: () => {
+        // Si falla, no rompe el catálogo: solo no se marcan los ya comprados.
       },
     });
   }
@@ -104,12 +118,18 @@ export class Catalogo implements OnDestroy {
       next: () => {
         this.comprando.set(null);
         this.comprado.set(juego.id);
+        this.yaComprados.update((set) => new Set(set).add(juego.id));
         this.mensaje.set(`${juego.titulo} ya está en tu biblioteca.`);
         setTimeout(() => this.comprado.set(null), 1200);
       },
       error: (e: HttpErrorResponse) => {
         this.comprando.set(null);
-        this.mensaje.set(`No se pudo comprar (HTTP ${e.status}).`);
+        if (e.status === 409) {
+          this.yaComprados.update((set) => new Set(set).add(juego.id));
+          this.mensaje.set(`Ya tienes "${juego.titulo}" en tu biblioteca.`);
+        } else {
+          this.mensaje.set(`No se pudo comprar (HTTP ${e.status}).`);
+        }
       },
     });
   }
