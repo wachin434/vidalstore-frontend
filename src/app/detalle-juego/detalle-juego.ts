@@ -30,6 +30,8 @@ export class DetalleJuego {
   protected readonly mensaje = signal<string | null>(null);
   protected readonly imagenActiva = signal(0);
   protected readonly rango5 = [1, 2, 3, 4, 5];
+  protected readonly yaComprados = signal<Set<string>>(new Set());
+
   private readonly idActual = toSignal(
     this.ruta.paramMap.pipe(map((params) => params.get('id') ?? '')),
     { initialValue: '' },
@@ -38,6 +40,11 @@ export class DetalleJuego {
   protected readonly juego = computed(() =>
     this.todos().find((j) => j.id === this.idActual()) ?? null,
   );
+
+  protected readonly yaLoTiene = computed(() => {
+    const j = this.juego();
+    return j ? this.yaComprados().has(j.id) : false;
+  });
 
   protected readonly galeria = computed(() => {
     const j = this.juego();
@@ -82,10 +89,23 @@ export class DetalleJuego {
         this.todos.set(juegos);
         this.estado.set(200);
         this.cargando.set(false);
+        this.cargarBibliotecaPropia();
       },
       error: (e: HttpErrorResponse) => {
         this.estado.set(e.status);
         this.cargando.set(false);
+      },
+    });
+  }
+
+  private cargarBibliotecaPropia() {
+    this.vidalstore.miBiblioteca().subscribe({
+      next: (licencias) => {
+        const ids = new Set(licencias.map((l) => l.juegoId));
+        this.yaComprados.set(ids);
+      },
+      error: () => {
+        // Si falla, no rompe el detalle: solo no se marca como ya comprado.
       },
     });
   }
@@ -98,11 +118,17 @@ export class DetalleJuego {
     this.vidalstore.comprar(j.id).subscribe({
       next: () => {
         this.comprando.set(false);
+        this.yaComprados.update((set) => new Set(set).add(j.id));
         this.mensaje.set(`${j.titulo} ya está en tu biblioteca.`);
       },
       error: (e: HttpErrorResponse) => {
         this.comprando.set(false);
-        this.mensaje.set(`No se pudo comprar (HTTP ${e.status}).`);
+        if (e.status === 409) {
+          this.yaComprados.update((set) => new Set(set).add(j.id));
+          this.mensaje.set(`Ya tienes "${j.titulo}" en tu biblioteca.`);
+        } else {
+          this.mensaje.set(`No se pudo comprar (HTTP ${e.status}).`);
+        }
       },
     });
   }
