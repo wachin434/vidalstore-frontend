@@ -9,6 +9,7 @@ export interface Juego {
   genero: string;
   portada: string;
   descripcion: string;
+  activo?: boolean;
 }
 
 export interface Licencia {
@@ -32,40 +33,143 @@ export interface RegistroAuditoria {
 
 const GATEWAY = 'http://localhost:8080';
 
-// Este servicio no sabe nada de tokens: eso es trabajo del interceptor.
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class Vidalstore {
-  private readonly http = inject(HttpClient);
+  private readonly http =
+    inject(HttpClient);
+
+  /* ===================================================
+     CATÁLOGO
+  =================================================== */
 
   catalogo(): Observable<Juego[]> {
-    return this.http.get<Juego[]>(`${GATEWAY}/v1/catalogo`);
+    return this.http.get<Juego[]>(
+      `${GATEWAY}/v1/catalogo`,
+    );
   }
 
-  publicarJuego(juego: Partial<Juego>): Observable<Juego> {
-    return this.http.post<Juego>(`${GATEWAY}/v1/catalogo`, juego);
+  /* ===================================================
+     PUBLICAR JUEGO
+  =================================================== */
+
+  publicarJuego(
+    juego: Partial<Juego>,
+  ): Observable<Juego> {
+    return this.http.post<Juego>(
+      `${GATEWAY}/v1/catalogo`,
+      juego,
+    );
   }
 
-  editarJuego(id: string, cambios: Partial<Juego>): Observable<Juego> {
-    return this.http.put<Juego>(`${GATEWAY}/v1/catalogo/${id}`, cambios);
+  /* ===================================================
+     EDITAR JUEGO
+  =================================================== */
+
+  editarJuego(
+    id: string,
+    cambios: Partial<Juego>,
+  ): Observable<Juego> {
+    return this.http.put<Juego>(
+      `${GATEWAY}/v1/catalogo/${encodeURIComponent(id)}`,
+      cambios,
+    );
   }
 
-  comprar(juegoId: string): Observable<{ licencia: Licencia; juego: Juego }> {
-    return this.http.post<{ licencia: Licencia; juego: Juego }>(`${GATEWAY}/v1/compras`, { juegoId });
+  /* ===================================================
+     ELIMINAR JUEGO
+  =================================================== */
+
+  eliminarJuego(
+    id: string,
+  ): Observable<{
+    mensaje: string;
+    juego: Juego;
+  }> {
+    return this.http.delete<{
+      mensaje: string;
+      juego: Juego;
+    }>(
+      `${GATEWAY}/v1/catalogo/${encodeURIComponent(id)}`,
+    );
   }
 
-  miBiblioteca(): Observable<Licencia[]> {
-    return this.http.get<Licencia[]>(`${GATEWAY}/v1/biblioteca`);
+  /* ===================================================
+     COMPRAR JUEGO
+  =================================================== */
+
+  comprar(
+    juegoId: string,
+  ): Observable<{
+    licencia: Licencia;
+    juego: Juego;
+  }> {
+    return this.http.post<{
+      licencia: Licencia;
+      juego: Juego;
+    }>(
+      `${GATEWAY}/v1/compras`,
+      {
+        juegoId,
+      },
+    );
   }
 
-  todasLasLicencias(): Observable<Licencia[]> {
-    return this.http.get<Licencia[]>(`${GATEWAY}/v1/licencias`);
+  /* ===================================================
+     MI BIBLIOTECA
+  =================================================== */
+
+  miBiblioteca(): Observable<
+    Licencia[]
+  > {
+    return this.http.get<
+      Licencia[]
+    >(
+      `${GATEWAY}/v1/biblioteca`,
+    );
   }
 
-  revocar(licenciaId: string): Observable<Licencia> {
-    return this.http.delete<Licencia>(`${GATEWAY}/v1/licencias/${licenciaId}`);
+  /* ===================================================
+     TODAS LAS LICENCIAS
+     Solo administradores
+  =================================================== */
+
+  todasLasLicencias(): Observable<
+    Licencia[]
+  > {
+    return this.http.get<
+      Licencia[]
+    >(
+      `${GATEWAY}/v1/licencias`,
+    );
   }
 
-  auditoria(): Observable<RegistroAuditoria[]> {
-    return this.http.get<RegistroAuditoria[]>(`${GATEWAY}/v1/auditoria`);
+  /* ===================================================
+     REVOCAR LICENCIA
+     Solo administradores
+  =================================================== */
+
+  revocar(
+    licenciaId: string,
+  ): Observable<Licencia> {
+    return this.http.delete<Licencia>(
+      `${GATEWAY}/v1/licencias/${encodeURIComponent(licenciaId)}`,
+    );
+  }
+
+  /* ===================================================
+     AUDITORÍA
+     Solo administradores
+  =================================================== */
+
+  auditoria(): Observable<
+    RegistroAuditoria[]
+  > {
+    return this.http.get<
+      RegistroAuditoria[]
+    >(
+      `${GATEWAY}/v1/auditoria`,
+    );
   }
 }
