@@ -1,4 +1,4 @@
-# VidalStore · Frontend (Angular + Amplify, look de Steam)
+# VidalStore · Frontend (Angular + Amplify)
 
 Tienda de videojuegos con identidad real: registro/login con AWS Cognito
 (Authorization Code + PKCE vía Amplify), guard de ruta, interceptor HTTP con
@@ -43,7 +43,7 @@ npm start
 Abre `http://localhost:4200`. Necesitas el gateway (`:8080`) y el microservicio
 (`:3001`) del backend corriendo primero.
 
-## Qué hace cada pieza (mapeado a los indicadores de la pauta)
+## Qué hace cada pieza 
 
 | Archivo | Qué resuelve | Indicador |
 |---|---|---|
@@ -54,7 +54,7 @@ Abre `http://localhost:4200`. Necesitas el gateway (`:8080`) y el microservicio
 | `src/app/callback/` | Recibe la vuelta de Cognito y navega al catálogo | IE8 |
 | `src/app/catalogo/`, `biblioteca/`, `publicar/`, `admin/` | Las pantallas de negocio | IE1, IE10 |
 
-## Registro de cuenta nueva (IE7)
+## Registro de cuenta nueva 
 
 No hay un formulario de registro propio: el login usa
 `signInWithRedirect()`, que lleva al **managed login** de Cognito, y ese
@@ -66,7 +66,7 @@ ahí mismo, sin que nadie lo dé de alta a mano. Esto es intencional: usar
 la nota de `signInWithRedirect vs signIn` en la guía del laboratorio L3,
 tramo 8.5) y el encargo exige Authorization Code con PKCE de todas formas.
 
-## Dónde queda el token, y por qué (para la defensa)
+## Dónde queda el token, y por qué 
 
 Por defecto, Amplify guarda los tokens en `localStorage`. Es el mismo punto
 débil que hundió a VidalCasino si además hay un XSS, pero acá el interceptor
