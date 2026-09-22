@@ -48,15 +48,21 @@
           type="search"
           placeholder="Buscar por título o género..."
           [ngModel]="busqueda()"
-          (ngModelChange)="busqueda.set($event)"
+          (ngModelChange)="
+            busqueda.set($event)
+          "
         />
       </div>
 
       <div class="vista-botones">
         <button
           type="button"
-          [class.activo]="!vistaLista()"
-          (click)="vistaLista.set(false)"
+          [class.activo]="
+            !vistaLista()
+          "
+          (click)="
+            vistaLista.set(false)
+          "
           title="Vista de cuadrícula"
         >
           ▦
@@ -64,8 +70,12 @@
 
         <button
           type="button"
-          [class.activo]="vistaLista()"
-          (click)="vistaLista.set(true)"
+          [class.activo]="
+            vistaLista()
+          "
+          (click)="
+            vistaLista.set(true)
+          "
           title="Vista de lista"
         >
           ☰
@@ -114,7 +124,9 @@
   } @else {
     <section
       class="juegos"
-      [class.vista-lista]="vistaLista()"
+      [class.vista-lista]="
+        vistaLista()
+      "
     >
       @for (
         juego of juegosFiltrados();
@@ -158,30 +170,23 @@
               }
             </div>
 
-            @if (
-              sesion.esEditor() ||
-              sesion.esAdministrador()
-            ) {
+            @if (sesion.esEditor()) {
               <div class="acciones-editor">
-
-                @if (sesion.esEditor()) {
-                  <button
-                    type="button"
-                    class="btn-editar-portada"
-                    title="Editar imagen"
-                    aria-label="Editar imagen"
-                    [disabled]="
-                      eliminando() === juego.id
-                    "
-                    (click)="
-                      empezarEdicionPortada(
-                        juego
-                      )
-                    "
-                  >
-                    ✎
-                  </button>
-                }
+                <button
+                  type="button"
+                  class="btn-editar-portada"
+                  title="Editar juego"
+                  aria-label="Editar juego"
+                  [disabled]="
+                    eliminando() ===
+                    juego.id
+                  "
+                  (click)="
+                    empezarEdicion(juego)
+                  "
+                >
+                  ✎
+                </button>
 
                 @if (
                   sesion.esAdministrador()
@@ -192,7 +197,8 @@
                     title="Eliminar juego"
                     aria-label="Eliminar juego"
                     [disabled]="
-                      eliminando() === juego.id
+                      eliminando() ===
+                      juego.id
                     "
                     (click)="
                       eliminarJuego(juego)
@@ -208,7 +214,6 @@
                     }
                   </button>
                 }
-
               </div>
             }
           </div>
@@ -244,22 +249,112 @@
             </p>
 
             @if (
-              editandoPortada() ===
+              editandoJuego() ===
               juego.id
             ) {
-              <div class="editor-portada">
-                <label>
-                  URL de la imagen
-                </label>
+              <div class="editor-portada editor-juego">
+                <h4>
+                  Editar juego
+                </h4>
 
-                <input
-                  type="url"
-                  [ngModel]="urlNueva()"
-                  (ngModelChange)="
-                    urlNueva.set($event)
-                  "
-                  placeholder="https://..."
-                />
+                <div class="campo-edicion">
+                  <label>
+                    Título
+                  </label>
+
+                  <input
+                    type="text"
+                    [ngModel]="
+                      tituloEditado()
+                    "
+                    (ngModelChange)="
+                      tituloEditado.set(
+                        $event
+                      )
+                    "
+                    placeholder="Título del juego"
+                  />
+                </div>
+
+                <div class="campos-edicion-dobles">
+                  <div class="campo-edicion">
+                    <label>
+                      Precio
+                    </label>
+
+                    <input
+                      type="number"
+                      min="0"
+                      step="1"
+                      [ngModel]="
+                        precioEditado()
+                      "
+                      (ngModelChange)="
+                        precioEditado.set(
+                          $event
+                        )
+                      "
+                      placeholder="Precio"
+                    />
+                  </div>
+
+                  <div class="campo-edicion">
+                    <label>
+                      Género
+                    </label>
+
+                    <input
+                      type="text"
+                      [ngModel]="
+                        generoEditado()
+                      "
+                      (ngModelChange)="
+                        generoEditado.set(
+                          $event
+                        )
+                      "
+                      placeholder="Género"
+                    />
+                  </div>
+                </div>
+
+                <div class="campo-edicion">
+                  <label>
+                    URL de la imagen
+                  </label>
+
+                  <input
+                    type="url"
+                    [ngModel]="
+                      portadaEditada()
+                    "
+                    (ngModelChange)="
+                      portadaEditada.set(
+                        $event
+                      )
+                    "
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <div class="campo-edicion">
+                  <label>
+                    Descripción
+                  </label>
+
+                  <textarea
+                    rows="4"
+                    [ngModel]="
+                      descripcionEditada()
+                    "
+                    (ngModelChange)="
+                      descripcionEditada.set(
+                        $event
+                      )
+                    "
+                    placeholder="Descripción del juego"
+                  ></textarea>
+                </div>
 
                 <div
                   class="editor-portada-acciones"
@@ -268,18 +363,18 @@
                     type="button"
                     class="btn-guardar-portada"
                     [disabled]="
-                      guardandoPortada()
+                      guardandoEdicion()
                     "
                     (click)="
-                      guardarPortada(juego)
+                      guardarEdicion(juego)
                     "
                   >
                     @if (
-                      guardandoPortada()
+                      guardandoEdicion()
                     ) {
                       Guardando...
                     } @else {
-                      Guardar
+                      Guardar cambios
                     }
                   </button>
 
@@ -287,10 +382,10 @@
                     type="button"
                     class="btn-cancelar-portada"
                     [disabled]="
-                      guardandoPortada()
+                      guardandoEdicion()
                     "
                     (click)="
-                      cancelarEdicionPortada()
+                      cancelarEdicion()
                     "
                   >
                     Cancelar

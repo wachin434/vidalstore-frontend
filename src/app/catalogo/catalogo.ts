@@ -112,16 +112,28 @@ export class Catalogo implements OnDestroy {
     ReturnType<typeof setInterval>;
 
   /* ===================================================
-     EDICIÓN DE PORTADA
+     EDICIÓN COMPLETA DEL JUEGO
   =================================================== */
 
-  protected readonly editandoPortada =
+  protected readonly editandoJuego =
     signal<string | null>(null);
 
-  protected readonly urlNueva =
+  protected readonly tituloEditado =
     signal('');
 
-  protected readonly guardandoPortada =
+  protected readonly precioEditado =
+    signal<number | null>(null);
+
+  protected readonly generoEditado =
+    signal('');
+
+  protected readonly portadaEditada =
+    signal('');
+
+  protected readonly descripcionEditada =
+    signal('');
+
+  protected readonly guardandoEdicion =
     signal(false);
 
   /* ===================================================
@@ -369,48 +381,135 @@ export class Catalogo implements OnDestroy {
   }
 
   /* ===================================================
-     EDITAR PORTADA
+     COMENZAR EDICIÓN
   =================================================== */
 
-  protected empezarEdicionPortada(
+  protected empezarEdicion(
     juego: Juego,
   ) {
-    this.editandoPortada.set(
-      juego.id,
-    );
-
-    this.urlNueva.set(
-      juego.portada,
-    );
-  }
-
-  protected cancelarEdicionPortada() {
-    this.editandoPortada.set(
-      null,
-    );
-
-    this.urlNueva.set('');
-  }
-
-  protected guardarPortada(
-    juego: Juego,
-  ) {
-    const url =
-      this.urlNueva().trim();
-
-    if (!url) {
+    if (!this.sesion.esEditor()) {
       return;
     }
 
-    this.guardandoPortada.set(
+    this.editandoJuego.set(
+      juego.id,
+    );
+
+    this.tituloEditado.set(
+      juego.titulo,
+    );
+
+    this.precioEditado.set(
+      juego.precio,
+    );
+
+    this.generoEditado.set(
+      juego.genero,
+    );
+
+    this.portadaEditada.set(
+      juego.portada,
+    );
+
+    this.descripcionEditada.set(
+      juego.descripcion ?? '',
+    );
+
+    this.mensaje.set(null);
+  }
+
+  /* ===================================================
+     CANCELAR EDICIÓN
+  =================================================== */
+
+  protected cancelarEdicion() {
+    this.editandoJuego.set(null);
+
+    this.tituloEditado.set('');
+
+    this.precioEditado.set(null);
+
+    this.generoEditado.set('');
+
+    this.portadaEditada.set('');
+
+    this.descripcionEditada.set('');
+  }
+
+  /* ===================================================
+     GUARDAR EDICIÓN
+  =================================================== */
+
+  protected guardarEdicion(
+    juego: Juego,
+  ) {
+    if (!this.sesion.esEditor()) {
+      return;
+    }
+
+    const titulo =
+      this.tituloEditado().trim();
+
+    const genero =
+      this.generoEditado().trim();
+
+    const portada =
+      this.portadaEditada().trim();
+
+    const descripcion =
+      this.descripcionEditada().trim();
+
+    const precio =
+      Number(
+        this.precioEditado(),
+      );
+
+    if (!titulo) {
+      this.mensaje.set(
+        'El título no puede estar vacío.',
+      );
+      return;
+    }
+
+    if (
+      !Number.isFinite(precio) ||
+      precio < 0
+    ) {
+      this.mensaje.set(
+        'El precio debe ser un número válido.',
+      );
+      return;
+    }
+
+    if (!genero) {
+      this.mensaje.set(
+        'El género no puede estar vacío.',
+      );
+      return;
+    }
+
+    if (!portada) {
+      this.mensaje.set(
+        'La URL de la imagen no puede estar vacía.',
+      );
+      return;
+    }
+
+    this.guardandoEdicion.set(
       true,
     );
+
+    this.mensaje.set(null);
 
     this.vidalstore
       .editarJuego(
         juego.id,
         {
-          portada: url,
+          titulo,
+          precio,
+          genero,
+          portada,
+          descripcion,
         },
       )
       .subscribe({
@@ -425,37 +524,53 @@ export class Catalogo implements OnDestroy {
                   juego.id
                     ? {
                         ...actual,
-                        portada:
-                          actualizado.portada,
+                        ...actualizado,
                       }
                     : actual,
               ),
           );
 
-          this.guardandoPortada.set(
+          this.guardandoEdicion.set(
             false,
           );
 
-          this.editandoPortada.set(
-            null,
-          );
-
-          this.urlNueva.set('');
+          this.cancelarEdicion();
 
           this.mensaje.set(
-            `Imagen de "${juego.titulo}" actualizada.`,
+            `"${actualizado.titulo}" fue actualizado correctamente.`,
           );
         },
 
         error: (
           e: HttpErrorResponse,
         ) => {
-          this.guardandoPortada.set(
+          this.guardandoEdicion.set(
             false,
           );
 
+          if (e.status === 403) {
+            this.mensaje.set(
+              'No tienes permisos para editar juegos.',
+            );
+            return;
+          }
+
+          if (e.status === 404) {
+            this.mensaje.set(
+              'El juego ya no existe.',
+            );
+            return;
+          }
+
+          if (e.status === 409) {
+            this.mensaje.set(
+              'El juego fue eliminado y ya no puede editarse.',
+            );
+            return;
+          }
+
           this.mensaje.set(
-            `No se pudo cambiar la imagen (HTTP ${e.status}).`,
+            `No se pudo editar el juego (HTTP ${e.status}).`,
           );
         },
       });
@@ -463,12 +578,15 @@ export class Catalogo implements OnDestroy {
 
   /* ===================================================
      ELIMINAR JUEGO
+     Solo administrador
   =================================================== */
 
   protected eliminarJuego(
     juego: Juego,
   ) {
-    if (!this.sesion.esEditor()) {
+    if (
+      !this.sesion.esAdministrador()
+    ) {
       return;
     }
 
@@ -506,9 +624,12 @@ export class Catalogo implements OnDestroy {
             null,
           );
 
-          this.editandoPortada.set(
-            null,
-          );
+          if (
+            this.editandoJuego() ===
+            juego.id
+          ) {
+            this.cancelarEdicion();
+          }
 
           this.mensaje.set(
             `"${juego.titulo}" fue eliminado del catálogo.`,
@@ -524,9 +645,8 @@ export class Catalogo implements OnDestroy {
 
           if (e.status === 403) {
             this.mensaje.set(
-              'No tienes permisos para eliminar juegos.',
+              'Solo los administradores pueden eliminar juegos.',
             );
-
             return;
           }
 
@@ -534,7 +654,6 @@ export class Catalogo implements OnDestroy {
             this.mensaje.set(
               'El juego ya no existe.',
             );
-
             return;
           }
 
@@ -542,7 +661,6 @@ export class Catalogo implements OnDestroy {
             this.mensaje.set(
               'El juego ya había sido eliminado.',
             );
-
             return;
           }
 
