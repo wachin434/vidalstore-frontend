@@ -18,17 +18,9 @@ export interface Licencia {
   usuarioSub: string;
   compradoEn: string;
   revocada: boolean;
+  revocadaEn?: string | null;
+  revocadaPor?: string | null;
   juego?: Juego;
-}
-
-export interface RegistroAuditoria {
-  id: string;
-  accion: string;
-  licenciaId: string;
-  juegoId: string;
-  adminSub: string;
-  usuarioSub: string;
-  fecha: string;
 }
 
 const GATEWAY = 'http://localhost:8080';
@@ -152,24 +144,11 @@ export class Vidalstore {
 
   revocar(
     licenciaId: string,
+    motivo?: string,
   ): Observable<Licencia> {
     return this.http.delete<Licencia>(
       `${GATEWAY}/v1/licencias/${encodeURIComponent(licenciaId)}`,
-    );
-  }
-
-  /* ===================================================
-     AUDITORÍA
-     Solo administradores
-  =================================================== */
-
-  auditoria(): Observable<
-    RegistroAuditoria[]
-  > {
-    return this.http.get<
-      RegistroAuditoria[]
-    >(
-      `${GATEWAY}/v1/auditoria`,
+      { body: { motivo } },
     );
   }
 }

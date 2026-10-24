@@ -32,23 +32,16 @@
       </tbody>
     </table>
 
-    <h2>Auditoría de revocaciones</h2>
-    @if (auditoria().length === 0) {
-      <p class="vacio">Todavía no hay revocaciones.</p>
-    } @else {
-      <table class="tabla">
-        <thead><tr><th>Fecha</th><th>Admin (sub)</th><th>Usuario (sub)</th><th>Juego</th></tr></thead>
-        <tbody>
-          @for (a of auditoria(); track a.id) {
-            <tr>
-              <td>{{ a.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
-              <td class="sub">{{ a.adminSub }}</td>
-              <td class="sub">{{ a.usuarioSub }}</td>
-              <td>{{ a.juegoId }}</td>
-            </tr>
-          }
-        </tbody>
-      </table>
+    @if (ultimaRevocada(); as r) {
+      <div class="resultado-revocacion">
+        <h2>Licencia revocada</h2>
+        <p>
+          La licencia de <strong>{{ r.juego?.titulo ?? r.juegoId }}</strong> del usuario
+          <span class="sub">{{ r.usuarioSub }}</span> quedó revocada por
+          <span class="sub">{{ r.revocadaPor }}</span>
+          el {{ r.revocadaEn | date: 'dd/MM/yyyy HH:mm' }}.
+        </p>
+      </div>
     }
   } @else if (estado() === 403) {
     <div class="error-caja">403 · solo el grupo <code>administradores</code> ve esta pantalla.</div>

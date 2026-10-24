@@ -1,7 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { Vidalstore, Licencia, RegistroAuditoria } from '../vidalstore/vidalstore';
+import { Vidalstore, Licencia } from '../vidalstore/vidalstore';
 
 @Component({
   selector: 'app-licencias',
@@ -13,7 +13,7 @@ export class Licencias {
   private readonly vidalstore = inject(Vidalstore);
 
   protected readonly licencias = signal<Licencia[]>([]);
-  protected readonly auditoria = signal<RegistroAuditoria[]>([]);
+  protected readonly ultimaRevocada = signal<Licencia | null>(null);
   protected readonly estado = signal<number | null>(null);
   protected readonly cargando = signal(true);
   protected readonly revocando = signal<string | null>(null);
@@ -29,7 +29,6 @@ export class Licencias {
         this.licencias.set(licencias);
         this.estado.set(200);
         this.cargando.set(false);
-        this.vidalstore.auditoria().subscribe({ next: (a) => this.auditoria.set(a) });
       },
       error: (e: HttpErrorResponse) => {
         this.estado.set(e.status);
@@ -41,7 +40,8 @@ export class Licencias {
   protected revocar(licencia: Licencia) {
     this.revocando.set(licencia.id);
     this.vidalstore.revocar(licencia.id).subscribe({
-      next: () => {
+      next: (revocada) => {
+        this.ultimaRevocada.set(revocada);
         this.revocando.set(null);
         this.cargar();
       },
