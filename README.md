@@ -85,3 +85,13 @@ del punto 1 del enunciado (revocación de licencias, ley de California sobre
 la palabra "comprar")— es distinguir compra de licencia con una letra chica
 visible, no solo en los términos y condiciones. Fundamenta tu propia postura
 en la defensa; esto es solo el punto de partida.
+
+## Cómo levantar el sistema (EP3)
+
+Este repositorio se construye y se levanta junto con los demás desde `vidalstore-plataforma`:
+
+```bash
+bash levantar.sh
+```
+
+Ver el README de `vidalstore-plataforma` para los requisitos y las URLs.
