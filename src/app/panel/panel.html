@@ -37,7 +37,7 @@
       <div class="error-caja">
         @for (a of d.alertas; track a.juegoId + a.desde) {
           <p>
-            <strong>Juego {{ a.juegoId }}</strong>, de {{ a.desde }} a {{ a.hasta }}: {{ a.enError }} de
+            <strong>{{ a.titulo ?? 'Juego ' + a.juegoId }}</strong>, de {{ a.desde }} a {{ a.hasta }}: {{ a.enError }} de
             {{ a.terminadas }} partidas terminadas en error ({{ a.porcentaje }}%).
           </p>
         }
@@ -62,11 +62,11 @@
           <td class="num">{{ clp(d.ventasSemana.revocadoClp) }}</td>
           <td class="num"><strong>{{ clp(d.ventasSemana.netoClp) }}</strong></td>
           <td>
-            @if (d.ventasSemana.masVendido; as v) { Juego {{ v.juegoId }} ({{ v.unidades }} u.) } @else { — }
+            @if (d.ventasSemana.masVendido; as v) { {{ v.titulo ?? 'Juego ' + v.juegoId }} ({{ v.unidades }} u.) } @else { — }
           </td>
           <td>
             @if (d.ventasSemana.mayorRecaudo; as v) {
-              Juego {{ v.juegoId }} ({{ clp(v.montoClp) }})
+              {{ v.titulo ?? 'Juego ' + v.juegoId }} ({{ clp(v.montoClp) }})
             } @else { — }
           </td>
         </tr>
@@ -104,7 +104,7 @@
       <tbody>
         @for (j of juegosConMasPartidas(); track j.juegoId) {
           <tr>
-            <td class="sub">{{ j.juegoId }}</td>
+            <td class="sub">{{ j.titulo ?? j.juegoId }}</td>
             <td class="num">{{ j.enCurso }}</td>
             <td class="num">{{ j.compras }}</td>
           </tr>
