@@ -1,0 +1,121 @@
+<div class="contenedor">
+  <h1>Panel en vivo</h1>
+
+  @if (estado() === 200 && datos(); as d) {
+    <p class="subtitulo">
+      Venta de verano hasta las <strong>{{ d.hasta ?? '—' }}</strong> (hora de Chile, según
+      <code>emitidoEn</code>). Se actualiza cada 5 segundos; van {{ refrescos() }} refrescos.
+    </p>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th class="num">Partidas en curso</th><th class="num">Iniciadas</th><th class="num">Terminadas</th>
+          <th class="num">Compras</th><th class="num">Monto (CLP)</th><th>Máximo en curso</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num"><strong>{{ d.totales.partidasEnCurso }}</strong></td>
+          <td class="num">{{ d.totales.partidasIniciadas }}</td>
+          <td class="num">{{ d.totales.partidasTerminadas }}</td>
+          <td class="num">{{ d.totales.compras }}</td>
+          <td class="num">{{ clp(d.totales.montoComprasClp) }}</td>
+          <td>
+            @if (d.maximoEnCurso; as m) { {{ m.partidas }} a las {{ m.hora }} } @else { — }
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Alertas</h2>
+    <p class="subtitulo">
+      Más del {{ d.regla.umbralError * 100 }}% de las partidas terminadas de un juego en error, en ventanas de
+      {{ d.regla.ventanaMinutos }} minutos, con al menos {{ d.regla.minimoTerminadas }} terminadas.
+    </p>
+    @if (d.alertas.length > 0) {
+      <div class="error-caja">
+        @for (a of d.alertas; track a.juegoId + a.desde) {
+          <p>
+            <strong>Juego {{ a.juegoId }}</strong>, de {{ a.desde }} a {{ a.hasta }}: {{ a.enError }} de
+            {{ a.terminadas }} partidas terminadas en error ({{ a.porcentaje }}%).
+          </p>
+        }
+      </div>
+    } @else {
+      <p>Sin alertas.</p>
+    }
+
+    <h2>Ventas de la semana</h2>
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th class="num">Compras</th><th class="num">Bruto (CLP)</th><th class="num">Revocaciones</th>
+          <th class="num">Revocado (CLP)</th><th class="num">Neto (CLP)</th><th>Más vendido</th><th>Mayor recaudo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">{{ d.ventasSemana.unidades }}</td>
+          <td class="num">{{ clp(d.ventasSemana.brutoClp) }}</td>
+          <td class="num">{{ d.ventasSemana.revocaciones }}</td>
+          <td class="num">{{ clp(d.ventasSemana.revocadoClp) }}</td>
+          <td class="num"><strong>{{ clp(d.ventasSemana.netoClp) }}</strong></td>
+          <td>
+            @if (d.ventasSemana.masVendido; as v) { Juego {{ v.juegoId }} ({{ v.unidades }} u.) } @else { — }
+          </td>
+          <td>
+            @if (d.ventasSemana.mayorRecaudo; as v) {
+              Juego {{ v.juegoId }} ({{ clp(v.montoClp) }})
+            } @else { — }
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Últimos minutos</h2>
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Minuto</th><th class="num">Iniciadas</th><th class="num">Terminadas</th>
+          <th class="num">En curso al cierre</th><th class="num">Compras</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (m of ultimosMinutos(); track m.minuto) {
+          <tr>
+            <td>{{ m.hora }}</td>
+            <td class="num">{{ m.iniciadas }}</td>
+            <td class="num">{{ m.terminadas }}</td>
+            <td class="num">{{ m.enCurso }}</td>
+            <td class="num">{{ m.compras }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5">Todavía no llega ningún evento. ¿Corre el simulador?</td></tr>
+        }
+      </tbody>
+    </table>
+
+    <h2>Juegos con más partidas en curso</h2>
+    <table class="tabla">
+      <thead>
+        <tr><th>Juego</th><th class="num">En curso</th><th class="num">Compras</th></tr>
+      </thead>
+      <tbody>
+        @for (j of juegosConMasPartidas(); track j.juegoId) {
+          <tr>
+            <td class="sub">{{ j.juegoId }}</td>
+            <td class="num">{{ j.enCurso }}</td>
+            <td class="num">{{ j.compras }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else if (estado() === 403) {
+    <div class="error-caja">403 · solo el grupo <code>administradores</code> ve esta pantalla.</div>
+  } @else if (estado() !== null) {
+    <div class="error-caja">El gateway respondió {{ estado() }}.</div>
+  } @else {
+    <p class="cargando">Cargando…</p>
+  }
+</div>
