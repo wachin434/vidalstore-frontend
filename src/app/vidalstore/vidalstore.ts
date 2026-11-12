@@ -34,17 +34,17 @@ export interface PanelEnVivo {
     compras: number;
     montoClp: number;
   }[];
-  porJuego: { juegoId: string; enCurso: number; compras: number }[];
+  porJuego: { juegoId: string; titulo: string | null; enCurso: number; compras: number }[];
   regla: { umbralError: number; minimoTerminadas: number; ventanaMinutos: number };
-  alertas: { juegoId: string; desde: string; hasta: string; terminadas: number; enError: number; porcentaje: number }[];
+  alertas: { juegoId: string; titulo: string | null; desde: string; hasta: string; terminadas: number; enError: number; porcentaje: number }[];
   ventasSemana: {
     unidades: number;
     brutoClp: number;
     revocaciones: number;
     revocadoClp: number;
     netoClp: number;
-    masVendido: { juegoId: string; unidades: number } | null;
-    mayorRecaudo: { juegoId: string; montoClp: number } | null;
+    masVendido: { juegoId: string; titulo: string | null; unidades: number } | null;
+    mayorRecaudo: { juegoId: string; titulo: string | null; montoClp: number } | null;
   };
 }
 
