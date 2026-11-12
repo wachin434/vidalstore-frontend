@@ -12,6 +12,42 @@ export interface Juego {
   activo?: boolean;
 }
 
+/** GET /v1/panel/en-vivo (EP3 E2). Las horas vienen en hora de Chile; `minuto` es el instante en UTC. */
+export interface PanelEnVivo {
+  zonaHoraria: string;
+  generadoEn: string;
+  hasta: string | null;
+  totales: {
+    partidasIniciadas: number;
+    partidasTerminadas: number;
+    partidasEnCurso: number;
+    compras: number;
+    montoComprasClp: number;
+  };
+  maximoEnCurso: { hora: string; partidas: number } | null;
+  porMinuto: {
+    minuto: string;
+    hora: string;
+    iniciadas: number;
+    terminadas: number;
+    enCurso: number;
+    compras: number;
+    montoClp: number;
+  }[];
+  porJuego: { juegoId: string; enCurso: number; compras: number }[];
+  regla: { umbralError: number; minimoTerminadas: number; ventanaMinutos: number };
+  alertas: { juegoId: string; desde: string; hasta: string; terminadas: number; enError: number; porcentaje: number }[];
+  ventasSemana: {
+    unidades: number;
+    brutoClp: number;
+    revocaciones: number;
+    revocadoClp: number;
+    netoClp: number;
+    masVendido: { juegoId: string; unidades: number } | null;
+    mayorRecaudo: { juegoId: string; montoClp: number } | null;
+  };
+}
+
 export interface Licencia {
   id: string;
   juegoId: string;
@@ -150,5 +186,14 @@ export class Vidalstore {
       `${GATEWAY}/v1/licencias/${encodeURIComponent(licenciaId)}`,
       { body: { motivo } },
     );
+  }
+
+  /* ===================================================
+     PANEL EN VIVO
+     Solo administradores (el gateway responde 403 al resto)
+  =================================================== */
+
+  panelEnVivo(): Observable<PanelEnVivo> {
+    return this.http.get<PanelEnVivo>(`${GATEWAY}/v1/panel/en-vivo`);
   }
 }

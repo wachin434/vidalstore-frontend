@@ -19,6 +19,10 @@ import {
 } from './admin/licencias';
 
 import {
+  Panel,
+} from './panel/panel';
+
+import {
   Callback,
 } from './callback/callback';
 
@@ -87,6 +91,15 @@ export const routes: Routes = [
   {
     path: 'admin',
     component: Licencias,
+    canActivate: [
+      sesionGuard,
+      adminGuard,
+    ],
+  },
+
+  {
+    path: 'panel',
+    component: Panel,
     canActivate: [
       sesionGuard,
       adminGuard,
