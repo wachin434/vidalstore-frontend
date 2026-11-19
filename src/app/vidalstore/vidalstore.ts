@@ -1,6 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { GATEWAY } from '../gateway';
 
 export interface Juego {
   id: string;
@@ -59,7 +60,6 @@ export interface Licencia {
   juego?: Juego;
 }
 
-const GATEWAY = 'http://localhost:8080';
 
 @Injectable({
   providedIn: 'root',
