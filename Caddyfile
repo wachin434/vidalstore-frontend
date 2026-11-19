@@ -7,6 +7,11 @@
 {$DOMINIO::80} {
     encode gzip
 
+    # El panel lo sirve el BFF de Azure (10.1.2.4:3000); sin BFF (compose local) lo atiende el gateway.
+    handle /v1/panel/* {
+        reverse_proxy {$BFF:127.0.0.1:8080}
+    }
+
     # La API va al gateway, que corre en la misma máquina en el 8080 (network_mode: host).
     handle /v1/* {
         reverse_proxy {$GATEWAY:127.0.0.1:8080}
