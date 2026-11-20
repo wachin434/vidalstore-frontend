@@ -1,6 +1,7 @@
 name: imagen
 
 # Construye la imagen de vidalstore-frontend y la publica en GHCR cuando main cambia.
+# Dos jobs: pruebas (instalar, lint, test y build) e imagen, que solo corre si pruebas pasa.
 # La etiqueta es el sha del commit de main: ghcr.io/<usuario>/vidalstore-frontend:<sha>
 on:
   push:
@@ -12,7 +13,21 @@ permissions:
   packages: write
 
 jobs:
+  # Cada job parte en una máquina limpia. La imagen solo se publica si las pruebas pasan.
+  pruebas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint --if-present
+      - run: npm test --if-present
+      - run: npm run build --if-present
   imagen:
+    needs: pruebas
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
